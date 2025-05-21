@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePokemonStore } from "../stores/pokemon.ts"
+import Button from "primevue/button"
+
 
 defineProps<{ msg: string }>()
 
@@ -60,8 +62,8 @@ onMounted(() => {
       </template>
     </li>
   </ul>
-  <button :disabled="page === 0" @click="setPage(page - 1)">PrevPage</button>
-  <button :disabled="page === totalPages - 1" @click="setPage(page + 1)">NextPage</button>
+  <Button :disabled="page === 0" @click="setPage(page - 1)">PrevPage</Button>
+  <Button :disabled="page === totalPages - 1" @click="setPage(page + 1)">NextPage</Button>
 </template>
 
 <style scoped></style>

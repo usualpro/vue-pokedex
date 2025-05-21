@@ -1,4 +1,4 @@
-export const arrayRange = <T extends { name: string; url: string }>({
+export const arrayRange = <T>({
   page,
   limit,
   dataToDisplay,

@@ -15,7 +15,13 @@ export const usePokemonStore = defineStore("pokemon", {
     detailsCollection: {},
   }),
   getters: {
-    cumulatedWeight: (state) => {
+    displayedPokemonSpecies: (state) =>
+      arrayRange({
+        page: state.page,
+        limit: state.limit,
+        dataToDisplay: state.pokemon_species,
+      }),
+    cumulatedWeight: (state): number => {
       const displayedPokemonSpecies = arrayRange({
         page: state.page,
         limit: state.limit,
@@ -38,17 +44,11 @@ export const usePokemonStore = defineStore("pokemon", {
 
       return totalWeight;
     },
-    displayedPokemonSpecies: (state) =>
-      arrayRange({
-        page: state.page,
-        limit: state.limit,
-        dataToDisplay: state.pokemon_species,
-      }),
-    totalPages: (state) =>
+    totalPages: (state): number =>
       Math.ceil(state.pokemon_species.length / state.limit),
   },
   actions: {
-    async fetchPokemonList() {
+    async fetchPokemonList(): Promise<void> {
       try {
         const { pokemon_species } =
           await alovaInstance.Get<FetchPokemonListType>(`/generation/1`);
@@ -58,7 +58,7 @@ export const usePokemonStore = defineStore("pokemon", {
         throw new Error(`${err}`);
       }
     },
-    async fetchPokemonDetail(pokemonName: string) {
+    async fetchPokemonDetail(pokemonName: string): Promise<void> {
       try {
         const { types, id, height, weight, sprites, abilities } =
           await alovaInstance.Get<FetchPokemonDetailType>(
@@ -76,7 +76,7 @@ export const usePokemonStore = defineStore("pokemon", {
         throw new Error(`${err}`);
       }
     },
-    async fetchPageDetails() {
+    async fetchPageDetails(): Promise<void> {
       const promises = this.displayedPokemonSpecies.map(
         (pokemon: { name: string }) =>
           !this.detailsCollection[pokemon.name]
@@ -85,10 +85,10 @@ export const usePokemonStore = defineStore("pokemon", {
       );
       await Promise.all(promises);
     },
-    setPage(page: number) {
+    async setPage(page: number): Promise<void> {
       if (page >= 0 && page < this.totalPages) {
         this.page = page;
-        this.fetchPageDetails();
+        return await this.fetchPageDetails();
       }
     },
   },
