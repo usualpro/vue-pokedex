@@ -8,9 +8,20 @@ defineProps<{ msg: string }>()
 
 const pokemonStore = usePokemonStore()
 
-const { pokemon_species, displayedPokemonSpecies, totalPages, page } = storeToRefs(pokemonStore)
+const {
+  displayedPokemonSpecies,
+  totalPages,
+  page,
+  detailsCollection,
+  cumulatedWeight
+} = storeToRefs(pokemonStore)
 
-const { fetchPokemonList, setPage } = pokemonStore
+const {
+  fetchPokemonList,
+  fetchPokemonDetail,
+  fetchPageDetails,
+  setPage
+} = pokemonStore
 
 onMounted(() => {
   fetchPokemonList()
@@ -22,8 +33,35 @@ onMounted(() => {
   <h1>{{ msg }}</h1>
   <h2>{{ totalPages }} pages</h2>
   <h2>current page: {{ page }} </h2>
-  <pre>{{ JSON.stringify(displayedPokemonSpecies, null, 2) }}</pre>
-  <button @click="setPage(page - 1)">PrevPage</button> <button @click="setPage(page + 1)">NextPage</button>
+
+  cumulatedWeight:{{ cumulatedWeight }}
+
+  <ul id="list">
+    <li v-for="pokemon in displayedPokemonSpecies" :key="pokemon.name">
+      <button @click="fetchPokemonDetail(pokemon.name)">{{ pokemon.name }}</button>
+      <template v-if="detailsCollection[pokemon.name]">
+        <div>id: {{ detailsCollection[pokemon.name].id }}</div>
+        <div>types:
+          <div>
+            <pre>{{ JSON.stringify(detailsCollection[pokemon.name].types), null, 2 }}</pre>
+          </div>
+          <div>
+            height: {{ detailsCollection[pokemon.name].height }}
+          </div>
+          <div>
+            weight: {{ detailsCollection[pokemon.name].weight }}
+          </div>
+          <img :src="detailsCollection[pokemon.name].sprites.front_default" />
+          abilities:
+          <div>
+            <pre>{{ JSON.stringify(detailsCollection[pokemon.name].abilities), null, 2 }}</pre>
+          </div>
+        </div>
+      </template>
+    </li>
+  </ul>
+  <button :disabled="page === 0" @click="setPage(page - 1)">PrevPage</button>
+  <button :disabled="page === totalPages - 1" @click="setPage(page + 1)">NextPage</button>
 </template>
 
 <style scoped></style>
