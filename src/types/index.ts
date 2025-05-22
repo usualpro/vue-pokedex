@@ -1,6 +1,7 @@
-type BasePokemonType = {
+export type BasePokemonType = {
   name: string;
   url: string;
+  infos: FetchPokemonDetailType;
 };
 
 export type FetchPokemonListType = {
@@ -26,12 +27,8 @@ export type FetchPokemonDetailType = {
   weight: number;
 };
 
-export type PokemonsDetailsCollectionType = {
-  [key: string]: FetchPokemonDetailType;
-};
-
 export type PokemonStoreType = {
-  limit: number;
-  page: number;
-  detailsCollection: PokemonsDetailsCollectionType;
+  currentPage: number;
+  rowsPerPage: number;
+  cumulatedWeight: number;
 } & FetchPokemonListType;

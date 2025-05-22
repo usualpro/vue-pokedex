@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { alovaInstance } from "../services";
 import type {
+  BasePokemonType,
   FetchPokemonDetailType,
   FetchPokemonListType,
   PokemonStoreType,
@@ -10,52 +11,36 @@ import { arrayRange } from "../utils";
 export const usePokemonStore = defineStore("pokemon", {
   state: (): PokemonStoreType => ({
     pokemon_species: [],
-    limit: 5,
-    page: 0,
-    detailsCollection: {},
+    currentPage: 0,
+    rowsPerPage: 5,
+    cumulatedWeight: 0,
   }),
   getters: {
-    displayedPokemonSpecies: (state) =>
-      arrayRange({
-        page: state.page,
-        limit: state.limit,
-        dataToDisplay: state.pokemon_species,
-      }),
-    cumulatedWeight: (state): number => {
-      const displayedPokemonSpecies = arrayRange({
-        page: state.page,
-        limit: state.limit,
-        dataToDisplay: state.pokemon_species,
+    totalPages: (state): number =>
+      Math.ceil(state.pokemon_species.length / state.rowsPerPage),
+  },
+  actions: {
+    setCumulatedWeight(pokemonSpecies: BasePokemonType[]): number {
+      const allDisplayedWeight = arrayRange({
+        page: this.currentPage,
+        limit: this.rowsPerPage,
+        dataToDisplay: pokemonSpecies,
+      }).map((pokemon) => {
+        const pokemonInfos = pokemon.infos;
+        if (!pokemonInfos) return 0;
+        return pokemonInfos.weight;
       });
-
-      const displayedPokemonNames = displayedPokemonSpecies.map(
-        (pokemon) => pokemon.name
-      );
-
-      const allDisplayedWeight = displayedPokemonNames.map((pokemonName) => {
-        if (!state.detailsCollection[pokemonName]) return 0;
-        return state.detailsCollection[pokemonName].weight;
-      });
-
       const totalWeight = allDisplayedWeight.reduce(
         (accumulator, currentValue) => accumulator + currentValue,
         0
       );
-
+      this.cumulatedWeight = totalWeight;
       return totalWeight;
     },
-    totalPages: (state): number =>
-      Math.ceil(state.pokemon_species.length / state.limit),
-  },
-  actions: {
-    async fetchPokemonList(): Promise<void> {
-      try {
-        const { pokemon_species } =
-          await alovaInstance.Get<FetchPokemonListType>(`/generation/1`);
-        this.pokemon_species = [...pokemon_species];
-        await this.fetchPageDetails();
-      } catch (err) {
-        throw new Error(`${err}`);
+    setPage(page: number, rows: number): void {
+      if (page >= 0 && page < this.totalPages) {
+        this.currentPage = page;
+        this.rowsPerPage = rows;
       }
     },
     async fetchPokemonDetail(pokemonName: string): Promise<void> {
@@ -64,7 +49,8 @@ export const usePokemonStore = defineStore("pokemon", {
           await alovaInstance.Get<FetchPokemonDetailType>(
             `/pokemon/${pokemonName}`
           );
-        this.detailsCollection[pokemonName] = {
+        const t = this.pokemon_species.findIndex((e) => e.name === pokemonName);
+        this.pokemon_species[t].infos = {
           types,
           id,
           height,
@@ -77,18 +63,20 @@ export const usePokemonStore = defineStore("pokemon", {
       }
     },
     async fetchPageDetails(): Promise<void> {
-      const promises = this.displayedPokemonSpecies.map(
-        (pokemon: { name: string }) =>
-          !this.detailsCollection[pokemon.name]
-            ? this.fetchPokemonDetail(pokemon.name)
-            : Promise.resolve()
+      const promises = this.pokemon_species.map((pokemon: { name: string }) =>
+        this.fetchPokemonDetail(pokemon.name)
       );
       await Promise.all(promises);
     },
-    async setPage(page: number): Promise<void> {
-      if (page >= 0 && page < this.totalPages) {
-        this.page = page;
-        return await this.fetchPageDetails();
+    async fetchPokemonList(): Promise<void> {
+      try {
+        const { pokemon_species } =
+          await alovaInstance.Get<FetchPokemonListType>(`/generation/1`);
+        this.pokemon_species = [...pokemon_species];
+        await this.fetchPageDetails();
+        this.setCumulatedWeight(this.pokemon_species);
+      } catch (err) {
+        throw new Error(`${err}`);
       }
     },
   },

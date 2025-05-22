@@ -7,7 +7,8 @@ export const arrayRange = <T>({
   limit: number;
   dataToDisplay: T[];
 }): T[] => {
+  const sortedItems = [...dataToDisplay];
   const start = page * limit;
   const end = start + limit;
-  return dataToDisplay.slice(start, end);
+  return sortedItems.slice(start, end);
 };
