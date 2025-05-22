@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { usePokemonStore } from "../stores/pokemon.ts"
 import Button from "primevue/button"
+import { RouterLink } from "vue-router";
+
+import { usePokemonStore } from "../stores/pokemon.ts"
+
 
 
 defineProps<{ msg: string }>()
@@ -40,7 +43,8 @@ onMounted(() => {
 
   <ul id="list">
     <li v-for="pokemon in displayedPokemonSpecies" :key="pokemon.name">
-      <button @click="fetchPokemonDetail(pokemon.name)">{{ pokemon.name }}</button>
+      <!--button @click="fetchPokemonDetail(pokemon.name)">{{ pokemon.name }}</button-->
+      <RouterLink :to="`/pokemon/${pokemon.name}`">Details</RouterLink>
       <template v-if="detailsCollection[pokemon.name]">
         <div>id: {{ detailsCollection[pokemon.name].id }}</div>
         <div>types:

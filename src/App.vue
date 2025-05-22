@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import PokemonList from './components/PokemonList.vue'
+import { RouterView } from "vue-router";
 
 </script>
 
 <template>
-  <PokemonList msg="PokemonList" />
+  <RouterView />
 </template>
 
 <style scoped></style>
