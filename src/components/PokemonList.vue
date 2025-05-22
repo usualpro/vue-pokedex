@@ -28,6 +28,7 @@ const {
   pokemon_species,
   page,
   cumulatedWeight,
+  pokemonTypes
 } = storeToRefs(pokemonStore)
 
 const {
@@ -38,36 +39,28 @@ const {
 
 const filters = ref({
   name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  "infos.types": { value: null, matchMode: FilterMatchMode.IN },
 });
-const representatives = ref([
-  { name: 'Amy Elsner', image: 'amyelsner.png' },
-  { name: 'Anna Fali', image: 'annafali.png' },
-  { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-  { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-  { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-  { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-  { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-  { name: 'Onyama Limba', image: 'onyamalimba.png' },
-  { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-  { name: 'XuXue Feng', image: 'xuxuefeng.png' }
-]);
+
 
 const handlePageChange = (event) => setPage(event.page, event.rows)
 
 const onValueChange = (value) => setCumulatedWeight(value)
+
 const loading = ref(true);
+
 onMounted(() => {
-  fetchPokemonList()
-  loading.value = false;
+  fetchPokemonList().then(() => {
+    loading.value = false;
+  })
 });
 </script>
 
 <template>
-  <div class="card">
+  <div class="card" v-if="loading === false">
     <DataTable filterDisplay="row" v-model:filters="filters" :value="pokemon_species" paginator :rows="5"
       @page="handlePageChange" @value-change="onValueChange"
       :rowsPerPageOptions="[5, 10, 20, 50, 100, pokemon_species.length]">
-
       <template #header>
         <div class="flex flex-wrap items-center justify-between gap-2">
           <span class="text-xl font-bold">cumulatedWeight: {{ cumulatedWeight }}kg</span>
@@ -98,25 +91,22 @@ onMounted(() => {
               :alt="slotProps.data.name" class="w-24 rounded" />
           </template>
         </Column>
-        <Column header="Types">
+        <Column header="Types" field="infos.types" filterField="infos.types">
           <template #body="slotProps">
             <div v-if="slotProps.data.infos" class="flex flex-row gap-2">
               <Tag v-for="type in slotProps.data.infos.types" :key="type.type.name" :value="type.type.name" />
             </div>
           </template>
-          <!--template #filter="{ filterModel, filterCallback }">
-            <MultiSelect v-model="filterModel.value" @change="filterCallback()" :options="representatives"
-              optionLabel="name" placeholder="Any" style="min-width: 14rem" :maxSelectedLabels="1">
+          <template #filter="{ filterModel, filterCallback }" v-if="pokemonTypes.length">
+            <MultiSelect v-model="filterModel.value" :options="pokemonTypes" @change="filterCallback()"
+              :maxSelectedLabels="1">
               <template #option="slotProps">
                 <div class="flex items-center gap-2">
-                  <img :alt="slotProps.option.name"
-                    :src="`https://primefaces.org/cdn/primevue/images/avatar/${slotProps.option.image}`"
-                    style="width: 32px" />
-                  <span>{{ slotProps.option.name }}</span>
+                  <span>{{ slotProps.option }}</span>
                 </div>
               </template>
             </MultiSelect>
-          </template-->
+          </template>
         </Column>
         <Column header="Abilities">
           <template #body="slotProps">
@@ -162,6 +152,9 @@ onMounted(() => {
 
 
     </DataTable>
+  </div>
+  <div v-else>
+    loading
   </div>
 </template>
 

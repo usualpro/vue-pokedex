@@ -18,6 +18,18 @@ export const usePokemonStore = defineStore("pokemon", {
   getters: {
     totalPages: (state): number =>
       Math.ceil(state.pokemon_species.length / state.rowsPerPage),
+    pokemonTypes: (state) => {
+      if (state.pokemon_species.every((e) => e.infos)) {
+        const pokemonTypes = state.pokemon_species
+          .map((pokemon) => {
+            return pokemon.infos?.types.map((c) => c.type.name);
+          })
+          .flat();
+        return [...new Set(pokemonTypes)];
+      } else {
+        return {};
+      }
+    },
   },
   actions: {
     setCumulatedWeight(pokemonSpecies: BasePokemonType[]): number {
