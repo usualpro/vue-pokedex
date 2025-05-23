@@ -1,6 +1,5 @@
 export type BasePokemonType = {
   name: string;
-  url: string;
   infos: Omit<FetchPokemonDetailType, "types">;
   types: string[];
 };
@@ -33,3 +32,5 @@ export type PokemonStoreType = {
   rowsPerPage: number;
   cumulatedWeight: number;
 } & FetchPokemonListType;
+
+export type PokemonColorT = { backgroundColor: string; color: string };

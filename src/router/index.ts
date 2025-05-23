@@ -6,7 +6,7 @@ const routes = [
   { path: "/", name: "Home", component: Home },
   {
     path: "/pokemon/:name",
-    name: "Description",
+    name: "PokemonDetail",
     component: Description,
   },
 ];

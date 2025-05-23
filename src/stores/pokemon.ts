@@ -29,6 +29,16 @@ export const usePokemonStore = defineStore("pokemon", {
       return [];
     },
 
+    pokemonAbilities: (state): string[] => {
+      if (state.pokemon_species.every((pokemon) => pokemon.infos)) {
+        const types = state.pokemon_species.flatMap((pokemon) =>
+          pokemon.infos.abilities.map((ability) => ability.ability.name)
+        );
+        return [...new Set(types)];
+      }
+      return [];
+    },
+
     // Calculate the total number of pages based on rows per page
     totalPages: (state): number =>
       Math.ceil(state.pokemon_species.length / state.rowsPerPage),
@@ -63,15 +73,30 @@ export const usePokemonStore = defineStore("pokemon", {
             `/pokemon/${pokemonName}`
           );
 
-        const index = this.pokemon_species.findIndex(
-          (p) => p.name === pokemonName
+        const infos = {
+          id,
+          height,
+          weight,
+          sprites,
+          abilities,
+        };
+
+        const probableIndexOfThePokemon = this.pokemon_species.findIndex(
+          (e) => e.name === pokemonName
         );
-        if (index !== -1) {
-          this.pokemon_species[index] = {
-            ...this.pokemon_species[index],
-            types: types.map((t) => t.type.name),
-            infos: { id, height, weight, sprites, abilities },
+
+        if (probableIndexOfThePokemon === -1) {
+          const newPokemonSpecies = {
+            name: pokemonName,
+            types: types.map((e) => e.type.name),
+            infos,
           };
+          this.pokemon_species.push(newPokemonSpecies);
+        } else {
+          this.pokemon_species[probableIndexOfThePokemon].types = types.map(
+            (e) => e.type.name
+          );
+          this.pokemon_species[probableIndexOfThePokemon].infos = infos;
         }
       } catch (error) {
         throw new Error(`Failed to fetch details for ${pokemonName}: ${error}`);
