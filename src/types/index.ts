@@ -1,7 +1,8 @@
 export type BasePokemonType = {
   name: string;
   url: string;
-  infos: FetchPokemonDetailType;
+  infos: Omit<FetchPokemonDetailType, "types">;
+  types: string[];
 };
 
 export type FetchPokemonListType = {
