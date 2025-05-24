@@ -3,6 +3,7 @@ import { alovaInstance } from "../services";
 import type {
   BasePokemonType,
   FetchPokemonDetailType,
+  FetchPokemonGenerationType,
   FetchPokemonListType,
   PokemonStoreType,
 } from "../types";
@@ -13,6 +14,10 @@ export const usePokemonStore = defineStore("pokemon", {
   // Initialize the state
   state: (): PokemonStoreType => ({
     pokemon_species: [],
+    selectedGeneration: {
+      name: "",
+    },
+    generations: [],
     currentPage: 0,
     rowsPerPage: 5,
     cumulatedWeight: 0,
@@ -24,7 +29,7 @@ export const usePokemonStore = defineStore("pokemon", {
     pokemonTypes: (state): string[] => {
       if (state.pokemon_species.every((pokemon) => pokemon.infos)) {
         const types = state.pokemon_species.flatMap((pokemon) => pokemon.types);
-        return [...new Set(types)];
+        return [...new Set(types)].sort();
       }
       return [];
     },
@@ -65,6 +70,20 @@ export const usePokemonStore = defineStore("pokemon", {
       }
     },
 
+    setSelectedGeneration(generation: { name: string }) {
+      this.selectedGeneration = generation;
+    },
+    async fetchGenerations() {
+      try {
+        const { results } = await alovaInstance.Get<FetchPokemonGenerationType>(
+          `/generation/`
+        );
+        this.generations = results;
+        return results;
+      } catch (error) {
+        throw new Error(`Failed to fetch details for generation: ${error}`);
+      }
+    },
     // Fetch detailed information for a single Pokemon by name
     async fetchPokemonDetail(pokemonName: string): Promise<void> {
       try {
@@ -115,8 +134,9 @@ export const usePokemonStore = defineStore("pokemon", {
     async fetchPokemonList(): Promise<void> {
       try {
         const { pokemon_species } =
-          await alovaInstance.Get<FetchPokemonListType>("/generation/1");
-
+          await alovaInstance.Get<FetchPokemonListType>(
+            `/generation/${this.selectedGeneration.name}`
+          );
         this.pokemon_species = [...pokemon_species];
         await this.fetchPageDetails();
         this.setCumulatedWeight(this.pokemon_species);

@@ -1,14 +1,25 @@
 <template>
+
   <!-- DataTable for displaying Pokemon with filtering and pagination -->
+
+
   <DataTable filterDisplay="row" v-model:filters="filters" :value="pokemonSpecies" :loading="loading" paginator
-    :rows="5" @page="handlePageChange" @value-change="updateCumulatedWeight" @rowSelect="onRowSelect"
-    selectionMode="single" :rowsPerPageOptions="[5, 10, 20, 50, 100, pokemonSpecies.length]">
+    :rows="10" @page="handlePageChange" @value-change="updateCumulatedWeight" @rowSelect="onRowSelect"
+    selectionMode="single" :rowsPerPageOptions="[10, 20, 50, 100, pokemonSpecies.length]">
 
     <!-- Empty state message -->
     <template #empty>No pokemon found.</template>
 
     <!-- Loading state message -->
     <template #loading>Loading pokemon. Please wait.</template>
+
+    <template #header>
+      <div class="flex items-center  p-4 gap-2 md:w-xs w-full  justify-center m-auto" v-if="generations.length">
+        <h1 class="text-center whitespace-nowrap">Pokemons of the</h1>
+        <Select v-model="selectedGeneration" @change="handleGenerationChange" :options="generations" optionLabel="name"
+          placeholder="Select a generation" />
+      </div>
+    </template>
 
     <!-- Column: Pokémon ID -->
     <Column header="ID" sortable field="infos.id">
@@ -90,6 +101,7 @@ import Button from "primevue/button"
 import DataView from "primevue/dataview"
 import Skeleton from "primevue/skeleton"
 import Column from "primevue/Column"
+import Select from 'primevue/select';
 import DataTable from "primevue/dataTable"
 import { FilterMatchMode } from "@primevue/core/api"
 import Tag from "primevue/tag"
@@ -108,12 +120,15 @@ defineProps<{ msg: string }>()
 const pokemonStore = usePokemonStore()
 const {
   pokemon_species: pokemonSpecies,
+  selectedGeneration,
   page,
   cumulatedWeight,
   pokemonTypes,
+  generations,
   pokemonAbilities
 } = storeToRefs(pokemonStore)
-const { fetchPokemonList, setPage, setCumulatedWeight } = pokemonStore
+
+const { fetchPokemonList, fetchGenerations, setPage, setCumulatedWeight, setSelectedGeneration } = pokemonStore
 
 // Define filters for the DataTable with initial values
 const filters = ref({
@@ -123,7 +138,7 @@ const filters = ref({
 })
 
 // Track loading state for the Pokémon data
-const loading = ref(true)
+const loading = ref(false)
 
 // Handle pagination changes
 const handlePageChange = (event) => setPage(event.page, event.rows)
@@ -137,9 +152,27 @@ const router = useRouter()
 // Handle row selection and redirect to Pokemon detail page
 const onRowSelect = (row) => router.push({ name: "PokemonDetail", params: { name: row.data.name } })
 
-// Fetch Pokemon data on component mount
-onMounted(async () => {
+
+const handleGenerationChange = async (generation) => {
+  loading.value = true
+  setSelectedGeneration(generation.value)
+  try {
+    await fetchPokemonList()
+    loading.value = false
+  } catch (error) {
+    loading.value = false
+  }
+
+}
+
+const handleOnMounted = async () => {
+  loading.value = true
+  const generations = await fetchGenerations()
+  setSelectedGeneration(generations[0])
   await fetchPokemonList()
   loading.value = false
-})
+}
+
+// Fetch Pokemon data on component mount
+onMounted(handleOnMounted)  
 </script>

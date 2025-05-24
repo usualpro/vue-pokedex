@@ -27,10 +27,18 @@ export type FetchPokemonDetailType = {
   weight: number;
 };
 
+export type FetchPokemonGenerationType = {
+  results: {
+    name: string;
+  }[];
+};
+
 export type PokemonStoreType = {
   currentPage: number;
   rowsPerPage: number;
   cumulatedWeight: number;
+  generations: { name: string }[];
+  selectedGeneration: { name: string };
 } & FetchPokemonListType;
 
 export type PokemonColorT = { backgroundColor: string; color: string };

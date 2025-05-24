@@ -30,7 +30,7 @@
             </template>
             <template #footer>
                 <div class="flex gap-4 mt-1">
-                    <Button :onClick="handleBackButtonClick" label="Back to list" class="w-full" />
+                    <Button :onClick="handleBack" label="Back to list" class="w-full" />
                 </div>
             </template>
         </Card>
@@ -39,7 +39,7 @@
         <Card class="max-w-md overflow-hidden m-auto">
             <template #header>
                 <div class="m-auto">
-                    <Skeleton shape="circle" size="5rem"></Skeleton>
+                    <Skeleton shape="circle" size="5rem" class="m-auto"></Skeleton>
                 </div>
             </template>
             <template #title>
@@ -90,7 +90,7 @@ const pokemonStore = usePokemonStore()
 const results = ref({})
 
 
-const handleBackButtonClick = () => router.push({ name: "Home" });
+const handleBack = () => router.push({ name: "Home" });
 
 const {
     pokemon_species
@@ -101,8 +101,12 @@ const {
 } = pokemonStore
 
 onMounted(async () => {
-    await fetchPokemonDetail(props.pokemonName)
-    results.value = pokemon_species.value.find((pokemon) => pokemon.name === props.pokemonName)
+    try {
+        await fetchPokemonDetail(props.pokemonName)
+        results.value = pokemon_species.value.find((pokemon) => pokemon.name === props.pokemonName)
+    } catch (error) {
+        handleBack()
+    }
 });
 
 </script>
