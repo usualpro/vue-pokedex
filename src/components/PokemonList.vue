@@ -15,7 +15,7 @@
 
     <template #header>
       <div class="flex items-center  p-4 gap-2 md:w-xs w-full  justify-center m-auto" v-if="generations.length">
-        <h1 class="text-center whitespace-nowrap">Pokemons of the</h1>
+        <h1 class="text-center whitespace-nowrap" data-testid="appTitle">Pokemons of the</h1>
         <Select v-model="selectedGeneration" @change="handleGenerationChange" :options="generations" optionLabel="name"
           placeholder="Select a generation" />
       </div>
@@ -137,7 +137,7 @@ const filters = ref({
   abilities: { value: null, matchMode: FilterMatchMode.CONTAINS },
 })
 
-// Track loading state for the Pokémon data
+// Track loading state for the Pokemon data
 const loading = ref(false)
 
 // Handle pagination changes
@@ -162,15 +162,19 @@ const handleGenerationChange = async (generation) => {
   } catch (error) {
     loading.value = false
   }
-
 }
 
 const handleOnMounted = async () => {
   loading.value = true
-  const generations = await fetchGenerations()
-  setSelectedGeneration(generations[0])
-  await fetchPokemonList()
-  loading.value = false
+  try {
+    const generations = await fetchGenerations()
+    setSelectedGeneration(generations[0])
+    await fetchPokemonList()
+    loading.value = false
+  } catch (error) {
+    loading.value = false
+  }
+
 }
 
 // Fetch Pokemon data on component mount
