@@ -98,9 +98,8 @@
 import { ref, onMounted } from "vue"
 import { storeToRefs } from "pinia"
 import Button from "primevue/button"
-import DataView from "primevue/dataview"
 import Skeleton from "primevue/skeleton"
-import Column from "primevue/Column"
+import Column from "primevue/column"
 import Select from 'primevue/select';
 import DataTable from "primevue/dataTable"
 import { FilterMatchMode } from "@primevue/core/api"
