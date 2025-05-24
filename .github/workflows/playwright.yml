@@ -14,11 +14,10 @@ jobs:
       with:
         node-version: lts/*
     - name: Install dependencies
-      run: npm ci # Utiliser 'npm ci' pour une installation propre en CI
+      run: npm ci 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      # Playwright va maintenant démarrer le serveur via la configuration webServer
       run: npx playwright test
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
