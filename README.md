@@ -40,7 +40,7 @@ To run the project locally, follow the steps below:
 In the project directory, you can run the following commands:
 
 * **`npm run dev`**: Starts the application in development mode.
-    Opens your browser to `http://localhost:5173` (or a similar port) to view the application. Hot reloading is enabled.
+    Opens your browser to `http://localhost:5173` (or a similar port) to view the application. Hot reloading is enabled. **Note: For end-to-end tests to function correctly, the development server must be running on port `5173`.**
 
 * **`npm run build`**: Builds the application for production to the `dist` folder.
     This script compiles the TypeScript code and optimizes the application for deployment.
