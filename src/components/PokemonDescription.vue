@@ -1,5 +1,5 @@
 <template>
-    <template v-if="results.name.length">
+    <template v-if="!loading">
         <Card class="max-w-md overflow-hidden m-auto">
             <template #header>
                 <img :alt="results.name" class="m-auto" :src="results.infos.sprites.front_default" />
@@ -86,6 +86,8 @@ const router = useRouter();
 
 const pokemonStore = usePokemonStore()
 
+const loading = ref(false);
+
 const results = ref<BasePokemonType>({
     name: '',
     infos: {
@@ -112,12 +114,15 @@ const {
 } = pokemonStore
 
 onMounted(async () => {
+    loading.value = true
     try {
         await fetchPokemonDetail(props.pokemonName as string)
         const selectedPokemon = pokemon_species.value.find((pokemon) => pokemon.name === props.pokemonName)
         if (selectedPokemon)
             results.value = selectedPokemon
+        loading.value = false
     } catch (error) {
+        loading.value = false
         handleBack()
     }
 });
