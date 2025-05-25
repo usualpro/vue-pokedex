@@ -113,7 +113,6 @@ const {
 
 onMounted(async () => {
     try {
-        console.log(props.pokemonName)
         await fetchPokemonDetail(props.pokemonName as string)
         const selectedPokemon = pokemon_species.value.find((pokemon) => pokemon.name === props.pokemonName)
         if (selectedPokemon)

@@ -1,8 +1,5 @@
 <template>
-
   <!-- DataTable for displaying Pokemon with filtering and pagination -->
-
-
   <DataTable filterDisplay="row" v-model:filters="filters" :value="pokemonSpecies" :loading="loading" paginator
     :rows="10" @page="handlePageChange" @value-change="updateCumulatedWeight" @rowSelect="onRowSelect"
     selectionMode="single" :rowsPerPageOptions="[10, 20, 50, 100, pokemonSpecies.length]">
@@ -94,6 +91,7 @@
     <template #footer>Total weight of Pokemon displayed: {{ cumulatedWeight }}kg </template>
   </DataTable>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { storeToRefs } from "pinia"
@@ -109,8 +107,6 @@ import { getPokemonTypeColor, getAbilityColor } from "../utils/"
 import { usePokemonStore } from "../stores/pokemon.ts"
 import type { BasePokemonType } from "../types/index.ts"
 
-// Define component props with TypeScript
-defineProps<{ msg: string }>()
 
 // Initialize the Pokemon store and extract reactive references
 const pokemonStore = usePokemonStore()
