@@ -130,7 +130,8 @@ const filters = ref({
 // Track loading state for the Pokemon data
 const loading = ref(false)
 
-const pokemonTableScrollHeight = `calc(100vh - ${(49 + 58 + 67) / 16}rem)` //paginatorHeight + filterHeight
+//@todo retrieve the current height of the requested dom elements
+const pokemonTableScrollHeight = `calc(100vh - ${(49 + 58 + 67) / 16}rem)` //footerHeight + paginatorHeight + filterHeight
 
 // Handle pagination changes
 const handlePageChange = (event: DataTablePageEvent) => setPage(event.page, event.rows)
