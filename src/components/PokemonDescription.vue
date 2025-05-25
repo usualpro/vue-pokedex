@@ -102,7 +102,6 @@ const results = ref<BasePokemonType>({
     types: []
 })
 
-
 const handleBack = () => router.push({ name: "Home" });
 
 const {
@@ -113,7 +112,7 @@ const {
     fetchPokemonDetail,
 } = pokemonStore
 
-onMounted(async () => {
+const handleOnMounted = async () => {
     loading.value = true
     try {
         await fetchPokemonDetail(props.pokemonName as string)
@@ -125,6 +124,9 @@ onMounted(async () => {
         loading.value = false
         handleBack()
     }
-});
+}
+
+// Fetch Pokemon data on component mount
+onMounted(handleOnMounted);
 
 </script>

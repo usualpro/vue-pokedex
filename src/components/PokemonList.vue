@@ -107,7 +107,6 @@ import { getPokemonTypeColor, getAbilityColor } from "../utils/"
 import { usePokemonStore } from "../stores/pokemon.ts"
 import type { BasePokemonType } from "../types/index.ts"
 
-
 // Initialize the Pokemon store and extract reactive references
 const pokemonStore = usePokemonStore()
 const {
@@ -141,7 +140,6 @@ const router = useRouter()
 
 // Handle row selection and redirect to Pokemon detail page
 const onRowSelect = (row: { data: { name: string } }) => router.push({ name: "PokemonDetail", params: { name: row.data.name } })
-
 
 const handleGenerationChange = async (generation: SelectChangeEvent) => {
   loading.value = true
