@@ -71,23 +71,34 @@
 import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import Button from "primevue/button"
-import { RouterLink } from "vue-router";
 import Card from 'primevue/card';
 import Badge from "primevue/badge"
 import Skeleton from "primevue/skeleton"
 import { useRouter } from 'vue-router'
 import { usePokemonStore } from "../stores/pokemon.ts"
 import { getPokemonTypeColor, getAbilityColor } from "../utils/"
+import type { BasePokemonType } from '../types/index.ts';
 
-
-const props = defineProps<{ pokemonName: string }>()
+const props = defineProps<{ pokemonName: string | string[] }>()
 
 // Router instance for navigation
 const router = useRouter();
 
 const pokemonStore = usePokemonStore()
 
-const results = ref({})
+const results = ref<BasePokemonType>({
+    name: '',
+    infos: {
+        abilities: [],
+        sprites: {
+            front_default: ''
+        },
+        id: 0,
+        height: 0,
+        weight: 0
+    },
+    types: []
+})
 
 
 const handleBack = () => router.push({ name: "Home" });
@@ -102,8 +113,11 @@ const {
 
 onMounted(async () => {
     try {
-        await fetchPokemonDetail(props.pokemonName)
-        results.value = pokemon_species.value.find((pokemon) => pokemon.name === props.pokemonName)
+        console.log(props.pokemonName)
+        await fetchPokemonDetail(props.pokemonName as string)
+        const selectedPokemon = pokemon_species.value.find((pokemon) => pokemon.name === props.pokemonName)
+        if (selectedPokemon)
+            results.value = selectedPokemon
     } catch (error) {
         handleBack()
     }

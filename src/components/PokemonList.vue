@@ -97,20 +97,17 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { storeToRefs } from "pinia"
-import Button from "primevue/button"
-import Skeleton from "primevue/skeleton"
 import Column from "primevue/column"
-import Select from 'primevue/select';
-import DataTable from "primevue/datatable"
+import Select, { type SelectChangeEvent } from 'primevue/select';
+import DataTable, { type DataTablePageEvent } from "primevue/datatable"
 import { FilterMatchMode } from "@primevue/core/api"
 import Tag from "primevue/tag"
 import InputText from "primevue/inputtext"
 import MultiSelect from "primevue/multiselect"
-import { RouterLink } from "vue-router"
-import PokemonListItem from "./PokemonListItem.vue"
 import { useRouter } from 'vue-router'
 import { getPokemonTypeColor, getAbilityColor } from "../utils/"
 import { usePokemonStore } from "../stores/pokemon.ts"
+import type { BasePokemonType } from "../types/index.ts"
 
 // Define component props with TypeScript
 defineProps<{ msg: string }>()
@@ -120,11 +117,9 @@ const pokemonStore = usePokemonStore()
 const {
   pokemon_species: pokemonSpecies,
   selectedGeneration,
-  page,
   cumulatedWeight,
   pokemonTypes,
   generations,
-  pokemonAbilities
 } = storeToRefs(pokemonStore)
 
 const { fetchPokemonList, fetchGenerations, setPage, setCumulatedWeight, setSelectedGeneration } = pokemonStore
@@ -140,19 +135,19 @@ const filters = ref({
 const loading = ref(false)
 
 // Handle pagination changes
-const handlePageChange = (event) => setPage(event.page, event.rows)
+const handlePageChange = (event: DataTablePageEvent) => setPage(event.page, event.rows)
 
 // Update cumulative weight when the displayed Pokemon change
-const updateCumulatedWeight = (value) => setCumulatedWeight(value)
+const updateCumulatedWeight = (value: BasePokemonType[]) => setCumulatedWeight(value)
 
 // Router instance for navigation
 const router = useRouter()
 
 // Handle row selection and redirect to Pokemon detail page
-const onRowSelect = (row) => router.push({ name: "PokemonDetail", params: { name: row.data.name } })
+const onRowSelect = (row: { data: { name: string } }) => router.push({ name: "PokemonDetail", params: { name: row.data.name } })
 
 
-const handleGenerationChange = async (generation) => {
+const handleGenerationChange = async (generation: SelectChangeEvent) => {
   loading.value = true
   setSelectedGeneration(generation.value)
   try {
