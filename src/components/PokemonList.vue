@@ -1,8 +1,9 @@
 <template>
   <!-- DataTable for displaying Pokemon with filtering and pagination -->
-  <DataTable filterDisplay="row" v-model:filters="filters" :value="pokemonSpecies" :loading="loading" paginator
-    :rows="10" @page="handlePageChange" @value-change="updateCumulatedWeight" @rowSelect="onRowSelect"
-    selectionMode="single" :rowsPerPageOptions="[10, 20, 50, 100, pokemonSpecies.length]">
+  <DataTable scrollable :scrollHeight="pokemonTableScrollHeight" filterDisplay="row" v-model:filters="filters"
+    :value="pokemonSpecies" :loading="loading" paginator :rows="10" @page="handlePageChange"
+    @value-change="updateCumulatedWeight" @rowSelect="onRowSelect" selectionMode="single"
+    :rowsPerPageOptions="[10, 20, 50, 100, pokemonSpecies.length]">
 
     <!-- Empty state message -->
     <template #empty>No pokemon found.</template>
@@ -128,6 +129,8 @@ const filters = ref({
 
 // Track loading state for the Pokemon data
 const loading = ref(false)
+
+const pokemonTableScrollHeight = `calc(100vh - ${(49 + 58 + 67) / 16}rem)` //paginatorHeight + filterHeight
 
 // Handle pagination changes
 const handlePageChange = (event: DataTablePageEvent) => setPage(event.page, event.rows)
