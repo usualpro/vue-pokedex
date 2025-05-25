@@ -27,11 +27,10 @@ export const usePokemonStore = defineStore("pokemon", {
   getters: {
     // Extract unique Pokemon types from all species
     pokemonTypes: (state): string[] => {
-      if (state.pokemon_species.every((pokemon) => pokemon.infos)) {
-        const types = state.pokemon_species.flatMap((pokemon) => pokemon.types);
-        return [...new Set(types)].sort();
-      }
-      return [];
+      const types = state.pokemon_species
+        .filter((pokemon) => pokemon.types?.length > 0)
+        .flatMap((pokemon) => pokemon.types);
+      return [...new Set(types)].sort();
     },
 
     pokemonAbilities: (state): string[] => {
