@@ -1,5 +1,5 @@
 <template>
-    <template v-if="results.infos">
+    <template v-if="results.name.length">
         <Card class="max-w-md overflow-hidden m-auto">
             <template #header>
                 <img :alt="results.name" class="m-auto" :src="results.infos.sprites.front_default" />
