@@ -11,7 +11,7 @@
     <template #loading>Loading pokemon. Please wait.</template>
 
     <template #header>
-      <div class="flex items-center  p-4 gap-2 md:w-xs w-full  justify-center m-auto" v-if="generations.length">
+      <div class="flex gap-2 items-center justify-center" v-if="generations.length">
         <h1 class="text-center whitespace-nowrap" data-testid="appTitle">Pokemons of the</h1>
         <Select v-model="selectedGeneration" @change="handleGenerationChange" :options="generations" optionLabel="name"
           placeholder="Select a generation" />
