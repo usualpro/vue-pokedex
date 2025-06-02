@@ -22,7 +22,7 @@ To run the project locally, follow the steps below:
 
 1.  **Clone the repository**:
     ```bash
-    git clone <YOUR_REPOSITORY_URL>
+    git clone https://github.com/usualpro/vue-pokedex
     cd vue-pokedex
     ```
 
