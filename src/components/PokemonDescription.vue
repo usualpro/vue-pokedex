@@ -82,11 +82,11 @@ import type { BasePokemonType } from '../types/index.ts';
 const props = defineProps<{ pokemonName: string | string[] }>()
 
 // Router instance for navigation
-const router = useRouter();
+const router = useRouter()
 
 const pokemonStore = usePokemonStore()
 
-const loading = ref(false);
+const loading = ref(false)
 
 const results = ref<BasePokemonType>({
     name: '',
@@ -102,7 +102,7 @@ const results = ref<BasePokemonType>({
     types: []
 })
 
-const handleBack = () => router.push({ name: "Home" });
+const handleBack = () => router.push({ name: "Home" })
 
 const {
     pokemon_species
@@ -128,6 +128,6 @@ const handleOnMounted = async () => {
 }
 
 // Fetch Pokemon data on component mount
-onMounted(handleOnMounted);
+onMounted(handleOnMounted)
 
 </script>
