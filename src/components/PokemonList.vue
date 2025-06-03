@@ -152,6 +152,7 @@ const handleGenerationChange = async (generation: SelectChangeEvent) => {
     await fetchPokemonList()
     loading.value = false
   } catch (error) {
+    console.error("Failed to fetch Pokémon list:", error);
     loading.value = false
   }
 }
@@ -164,6 +165,7 @@ const handleOnMounted = async () => {
     await fetchPokemonList()
     loading.value = false
   } catch (error) {
+    console.error("Failed to fetch Pokémon list:", error);
     loading.value = false
   }
 

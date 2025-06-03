@@ -121,6 +121,7 @@ const handleOnMounted = async () => {
             results.value = selectedPokemon
         loading.value = false
     } catch (error) {
+        console.error("Failed to fetch Pokémon detail:", error);
         loading.value = false
         handleBack()
     }
