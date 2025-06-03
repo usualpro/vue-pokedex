@@ -72,6 +72,7 @@ export const usePokemonStore = defineStore("pokemon", {
     setSelectedGeneration(generation: { name: string }) {
       this.selectedGeneration = generation;
     },
+    
     async fetchGenerations() {
       try {
         const { results } = await alovaInstance.Get<FetchPokemonGenerationType>(
@@ -83,6 +84,7 @@ export const usePokemonStore = defineStore("pokemon", {
         throw new Error(`Failed to fetch details for generation: ${error}`);
       }
     },
+    
     // Fetch detailed information for a single Pokemon by name
     async fetchPokemonDetail(pokemonName: string): Promise<void> {
       try {
